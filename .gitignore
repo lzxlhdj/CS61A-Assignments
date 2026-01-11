@@ -2,5 +2,7 @@
 .DS_Store
 
 .ok_history
-.ok_storage
+.ok_storage.dir
+.ok_storage.bak
+.ok_storage.dat
 __pycache__/
