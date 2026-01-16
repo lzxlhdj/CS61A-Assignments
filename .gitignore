@@ -2,6 +2,8 @@
 .DS_Store
 
 .ok_history
+.ok_disabled
+.ok_consent
 .ok_storage.dir
 .ok_storage.bak
 .ok_storage.dat

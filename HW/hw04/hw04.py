@@ -13,7 +13,12 @@ def shuffle(s):
     """
     assert len(s) % 2 == 0, 'len(seq) must be even'
     "*** YOUR CODE HERE ***"
-
+    length = len(s) // 2
+    ans = []
+    for i in range(length):
+        ans += [s[i]]
+        ans += [s[i + length]]
+    return ans
 
 def deep_map(f, s):
     """Replace all non-list elements x with f(x) in the nested list s.
@@ -38,6 +43,12 @@ def deep_map(f, s):
     True
     """
     "*** YOUR CODE HERE ***"
+    for i in range(len(s)) :
+        if isinstance(s[i], list):
+            deep_map(f, s[i])
+        else :
+            s[i] = f(s[i])
+    return None
 
 
 HW_SOURCE_FILE=__file__
