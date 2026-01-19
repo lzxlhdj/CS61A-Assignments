@@ -27,6 +27,13 @@ def insert_items(s, before, after):
     True
     """
     "*** YOUR CODE HERE ***"
+    n = 0
+    for i in range(len(s)):
+        if s[i + n] == before:
+            s.insert(i + n + 1, after)
+            n += 1
+    return s
+
 
 
 def group_by(s, fn):
