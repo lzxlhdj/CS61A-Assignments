@@ -47,12 +47,12 @@ def group_by(s, fn):
     {9: [-3, 3], 4: [-2, 2], 1: [-1, 1], 0: [0]}
     """
     grouped = {}
-    for ____ in ____:
-        key = ____
+    for x in s:
+        key = fn(x)
         if key in grouped:
-            ____
+            grouped[key] += [x]
         else:
-            grouped[key] = ____
+            grouped[key] = [x]
     return grouped
 
 
@@ -78,6 +78,11 @@ def count_occurrences(t, n, x):
     2
     """
     "*** YOUR CODE HERE ***"
+    count = 0
+    for i in range(n):
+        if next(t) == x:
+            count += 1
+    return count
 
 
 def repeated(t, k):
@@ -101,6 +106,16 @@ def repeated(t, k):
     """
     assert k > 1
     "*** YOUR CODE HERE ***"
+    memo = 0
+    count = 1
+    for x in t:
+        if x != memo:
+            memo = x
+            count = 1        
+        else :
+            count += 1
+        if count == k:
+            return memo
 
 
 def sprout_leaves(t, leaves):
@@ -137,6 +152,13 @@ def sprout_leaves(t, leaves):
           2
     """
     "*** YOUR CODE HERE ***"
+    if is_leaf(t):
+        sprouted = [tree(i) for i in leaves]
+        return tree(label(t), sprouted)
+    else :
+        sprouted = [sprout_leaves(b, leaves)for b in branches(t)]
+        return tree(label(t), sprouted)
+        
 
 
 def partial_reverse(s, start):
@@ -152,8 +174,11 @@ def partial_reverse(s, start):
     [1, 2, 7, 6, 5, 3, 4]
     """
     "*** YOUR CODE HERE ***"
-
-
+    part_s = [s[i] for i in range(len(s)) if i >= start]
+    reverse_iter = reversed(part_s)
+    for i in range(start, len(s)):
+        s[i] = next(reverse_iter)
+    return None
 
 # Tree Data Abstraction
 
