@@ -46,7 +46,7 @@ def scheme_atomp(x):
 
 def self_evaluating(expr):
     """Return whether EXPR evaluates to itself."""
-    return (scheme_atomp(expr) and not scheme_symbolp(expr)) or expr is None
+    return (scheme_atomp(expr) and not scheme_symbolp(expr)) or expr is None #是一个原子且不是symbol 或者 是NOne
 
 
 #######################

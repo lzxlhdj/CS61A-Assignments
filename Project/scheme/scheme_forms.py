@@ -30,18 +30,28 @@ def do_define_form(expressions, env):
     >>> scheme_eval(read_line("(f 3)"), env)
     5
     """
-    validate_form(expressions, 2) # Checks that expressions is a list of length at least 2
+    validate_form(expressions, 2) # Checks that expressions is a list of length at least 2 这个函数在utils里
     signature = expressions.first
     if scheme_symbolp(signature):
         # assigning a name to a value e.g. (define x (+ 1 2))
         validate_form(expressions, 2, 2) # Checks that expressions is a list of length exactly 2
         # BEGIN PROBLEM 4
         "*** YOUR CODE HERE ***"
+        value = scheme_eval(expressions.rest.first, env) #是rest的first才是我们要求的值，而不是rest,因为rest其实是(value, nil)
+                                                         #在评估时会被认为是函数调用
+        env.define(signature, value)
+        return signature
         # END PROBLEM 4
     elif isinstance(signature, Pair) and scheme_symbolp(signature.first):
         # defining a named procedure e.g. (define (f x y) (+ x y))
         # BEGIN PROBLEM 10
         "*** YOUR CODE HERE ***"
+        name = signature.first
+        formals = signature.rest
+        body = expressions.rest
+        lambdaprocedure = do_lambda_form(Pair(formals, body), env)
+        env.define(name, lambdaprocedure)
+        return name
         # END PROBLEM 10
     else:
         bad_signature = signature.first if isinstance(signature, Pair) else signature
@@ -57,6 +67,9 @@ def do_quote_form(expressions, env):
     validate_form(expressions, 1, 1)
     # BEGIN PROBLEM 5
     "*** YOUR CODE HERE ***"
+    #在例子中，传入的是Pair(Pair('+', Pair('x', Pair(2, nil))), nil)
+    #这一坨东西也是一个Pair，要取它的第一个元素才是我们要的
+    return expressions.first
     # END PROBLEM 5
 
 def do_begin_form(expressions, env):
@@ -83,6 +96,8 @@ def do_lambda_form(expressions, env):
     validate_formals(formals)
     # BEGIN PROBLEM 7
     "*** YOUR CODE HERE ***"
+    body = expressions.rest
+    return LambdaProcedure(formals, body, env)
     # END PROBLEM 7
 
 def do_if_form(expressions, env):
@@ -116,6 +131,15 @@ def do_and_form(expressions, env):
     """
     # BEGIN PROBLEM 12
     "*** YOUR CODE HERE ***"
+    curr = expressions
+    result = True
+    while curr is not nil:
+        result = scheme_eval(curr.first, env)
+        if is_scheme_false(result):
+            return False
+        else:
+            curr = curr.rest
+    return result
     # END PROBLEM 12
 
 def do_or_form(expressions, env):
@@ -134,6 +158,15 @@ def do_or_form(expressions, env):
     """
     # BEGIN PROBLEM 12
     "*** YOUR CODE HERE ***"
+    curr = expressions
+    result = False
+    while curr is not nil:
+        result = scheme_eval(curr.first, env)
+        if is_scheme_true(result):
+            return result
+        else:
+            curr = curr.rest
+    return result
     # END PROBLEM 12
 
 def do_cond_form(expressions, env):
@@ -154,6 +187,11 @@ def do_cond_form(expressions, env):
         if is_scheme_true(test):
             # BEGIN PROBLEM 13
             "*** YOUR CODE HERE ***"
+            #如果后面没有子表达式 判断语句自己的结果
+            if clause.rest is nil:
+                return test
+            else:
+                return eval_all(clause.rest,env)
             # END PROBLEM 13
         expressions = expressions.rest
 
@@ -178,6 +216,23 @@ def make_let_frame(bindings, env):
     names = vals = nil
     # BEGIN PROBLEM 14
     "*** YOUR CODE HERE ***"
+    names_result = Pair(None, nil)
+    vals_result = Pair(None, nil)
+    names_sentinal = names_result
+    vals_sentinal = vals_result
+
+    while bindings is not nil:
+        validate_form(bindings.first, 2, 2)
+        names_sentinal.rest = Pair(bindings.first.first, nil)
+        vals_sentinal.rest = Pair(scheme_eval(bindings.first.rest.first, env), nil)
+        bindings = bindings.rest
+        names_sentinal = names_sentinal.rest
+        vals_sentinal = vals_sentinal.rest
+
+    names = names_result.rest
+    vals = vals_result.rest
+    validate_formals(names)
+    #或者这里其实也可以反着生成列表，顺序其实是不影响的
     # END PROBLEM 14
     return env.make_child_frame(names, vals)
 
@@ -220,6 +275,7 @@ def do_mu_form(expressions, env):
     validate_formals(formals)
     # BEGIN PROBLEM 11
     "*** YOUR CODE HERE ***"
+    return MuProcedure(formals, expressions.rest)
     # END PROBLEM 11
 
 

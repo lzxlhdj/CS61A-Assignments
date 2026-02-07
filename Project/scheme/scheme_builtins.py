@@ -21,10 +21,12 @@ from scheme_utils import *
 BUILTINS = []
 
 def builtin(*names, need_env=False):
-    """An annotation to convert a Python function into a BuiltinProcedure."""
+    """An annotation(注解) to convert a Python function into a BuiltinProcedure."""
     def add(py_func):
         for name in names:
             BUILTINS.append((name, py_func, names[0], need_env))
+            #将名字，对应的python函数，主名称，是否需要环境组成元组，储存到builtin里面
+            #在scheme.py里会将所builtin中所有的名字转化为BuiltinProcedure类
         return py_func
     return add
 

@@ -14,25 +14,32 @@ class Frame:
 
     def __init__(self, parent):
         """An empty frame with parent frame PARENT (which may be None)."""
-        self.bindings = {}
-        self.parent = parent
+        self.bindings = {} #储存当前帧的绑定
+        self.parent = parent 
 
     def __repr__(self):
         if self.parent is None:
             return '<Global Frame>'
-        s = sorted(['{0}: {1}'.format(k, v) for k, v in self.bindings.items()])
-        return '<{{{0}}} -> {1}>'.format(', '.join(s), repr(self.parent))
+        s = sorted(['{0}: {1}'.format(k, v) for k, v in self.bindings.items()]) # s储存当前帧的所有绑定，排序可使每次repr顺序固定
+        return '<{{{0}}} -> {1}>'.format(', '.join(s), repr(self.parent)) #0的最内层{}是占位符，外层两个{}表示真的要的大括号
 
     def define(self, symbol, value):
         """Define Scheme SYMBOL to have VALUE."""
         # BEGIN PROBLEM 1
         "*** YOUR CODE HERE ***"
+        self.bindings[symbol] = value
         # END PROBLEM 1
 
     def lookup(self, symbol):
         """Return the value bound to SYMBOL. Errors if SYMBOL is not found."""
         # BEGIN PROBLEM 1
         "*** YOUR CODE HERE ***"
+        env = self
+        while env is not None: #在自己环境找，找不到去父环境找，全都找不到就报错
+            if symbol in env.bindings:
+                return env.bindings[symbol]
+            else:
+                env = env.parent
         # END PROBLEM 1
         raise SchemeError('unknown identifier: {0}'.format(symbol))
 
@@ -52,6 +59,14 @@ class Frame:
             raise SchemeError('Incorrect number of arguments to function call')
         # BEGIN PROBLEM 8
         "*** YOUR CODE HERE ***"
+        new_frame = Frame(self)
+        formals_curr = formals
+        vals_curr = vals
+        while formals_curr is not nil and vals_curr is not nil:
+            new_frame.bindings[formals_curr.first] = vals_curr.first
+            formals_curr = formals_curr.rest
+            vals_curr = vals_curr.rest
+        return new_frame
         # END PROBLEM 8
 
 ##############
