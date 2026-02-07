@@ -72,7 +72,7 @@ def do_quote_form(expressions, env):
     return expressions.first
     # END PROBLEM 5
 
-def do_begin_form(expressions, env):
+def do_begin_form(expressions, env, tail = False):
     """Evaluate a begin form.
 
     >>> env = create_global_frame()
@@ -82,7 +82,7 @@ def do_begin_form(expressions, env):
     3
     """
     validate_form(expressions, 1)
-    return eval_all(expressions, env)
+    return eval_all(expressions, env, tail)
 
 def do_lambda_form(expressions, env):
     """Evaluate a lambda form.
@@ -100,7 +100,7 @@ def do_lambda_form(expressions, env):
     return LambdaProcedure(formals, body, env)
     # END PROBLEM 7
 
-def do_if_form(expressions, env):
+def do_if_form(expressions, env, tail = False):
     """Evaluate an if form.
 
     >>> env = create_global_frame()
@@ -111,11 +111,11 @@ def do_if_form(expressions, env):
     """
     validate_form(expressions, 2, 3)
     if is_scheme_true(scheme_eval(expressions.first, env)):
-        return scheme_eval(expressions.rest.first, env)
+        return scheme_eval(expressions.rest.first, env, tail)
     elif len(expressions) == 3:
-        return scheme_eval(expressions.rest.rest.first, env)
+        return scheme_eval(expressions.rest.rest.first, env, tail)
 
-def do_and_form(expressions, env):
+def do_and_form(expressions, env, tail = False):
     """Evaluate a (short-circuited) and form.
 
     >>> env = create_global_frame()
@@ -133,16 +133,19 @@ def do_and_form(expressions, env):
     "*** YOUR CODE HERE ***"
     curr = expressions
     result = True
-    while curr is not nil:
+    if curr is nil:
+        return True
+    while curr.rest is not nil:
         result = scheme_eval(curr.first, env)
         if is_scheme_false(result):
             return False
         else:
             curr = curr.rest
+    result = scheme_eval(curr.first, env, tail)
     return result
     # END PROBLEM 12
 
-def do_or_form(expressions, env):
+def do_or_form(expressions, env, tail = False):
     """Evaluate a (short-circuited) or form.
 
     >>> env = create_global_frame()
@@ -160,16 +163,19 @@ def do_or_form(expressions, env):
     "*** YOUR CODE HERE ***"
     curr = expressions
     result = False
-    while curr is not nil:
+    if curr is nil:
+        return False
+    while curr.rest is not nil:
         result = scheme_eval(curr.first, env)
         if is_scheme_true(result):
             return result
         else:
             curr = curr.rest
+    result = scheme_eval(curr.first, env, tail)
     return result
     # END PROBLEM 12
 
-def do_cond_form(expressions, env):
+def do_cond_form(expressions, env, tail = False):
     """Evaluate a cond form.
 
     >>> do_cond_form(read_line("((#f (print 2)) (#t 3))"), create_global_frame())
@@ -191,11 +197,11 @@ def do_cond_form(expressions, env):
             if clause.rest is nil:
                 return test
             else:
-                return eval_all(clause.rest,env)
+                return eval_all(clause.rest,env, tail)
             # END PROBLEM 13
         expressions = expressions.rest
 
-def do_let_form(expressions, env):
+def do_let_form(expressions, env, tail = False):
     """Evaluate a let form.
 
     >>> env = create_global_frame()
@@ -204,7 +210,7 @@ def do_let_form(expressions, env):
     """
     validate_form(expressions, 2)
     let_env = make_let_frame(expressions.first, env)
-    return eval_all(expressions.rest, let_env)
+    return eval_all(expressions.rest, let_env, tail)
 
 def make_let_frame(bindings, env):
     """Create a child frame of Frame ENV that contains the definitions given in
