@@ -19,24 +19,33 @@ def scheme_eval(expr, env, tail=False): # Optional third argument is ignored
     >>> scheme_eval(expr, create_global_frame())
     4
     """
-    # Evaluate atoms 比如单独一个数字或者单独一个字符串这种
+    # Evaluate atoms 原子类型，比如单独一个数字或者单独一个字符串这种
     if scheme_symbolp(expr):
         return env.lookup(expr)
     elif self_evaluating(expr):
         return expr
 
     # All non-atomic expressions are lists (combinations)
-    if not scheme_listp(expr): 
+    #组合表达式检查
+
+    if not scheme_listp(expr): #格式错误，不是组合 
         raise SchemeError('malformed list: {0}'.format(repl_str(expr)))
     first, rest = expr.first, expr.rest
-    if scheme_symbolp(first) and first in scheme_forms.SPECIAL_FORMS: #特殊情况
-        return scheme_forms.SPECIAL_FORMS[first](rest, env)
+
+    #特殊情况
+    if scheme_symbolp(first) and first in scheme_forms.SPECIAL_FORMS: 
+        need_tail = ['and', 'begin', 'or', 'cond', 'if', 'let']
+        if first in need_tail:
+            return scheme_forms.SPECIAL_FORMS[first](rest, env, tail)
+        else:
+            return scheme_forms.SPECIAL_FORMS[first](rest, env)
+    #一般函数调用
     else: 
         # BEGIN PROBLEM 3
         "*** YOUR CODE HERE ***"
-        first = scheme_eval(first, env)
-        rest = rest.map(lambda x:scheme_eval(x, env))
-        return scheme_apply(first, rest, env)
+        operators = scheme_eval(first, env)
+        operands = rest.map(lambda x:scheme_eval(x, env, False))
+        return scheme_apply(operators, operands, env)
         # END PROBLEM 3
 
 def scheme_apply(procedure, args, env):
@@ -69,13 +78,13 @@ def scheme_apply(procedure, args, env):
         # BEGIN PROBLEM 9
         "*** YOUR CODE HERE ***"
         lambda_frame = procedure.env.make_child_frame(procedure.formals, args) #注意!词法作用域！！！
-        return eval_all(procedure.body, lambda_frame)
+        return eval_all(procedure.body, lambda_frame, True)
         # END PROBLEM 9
     elif isinstance(procedure, MuProcedure):
         # BEGIN PROBLEM 11
         "*** YOUR CODE HERE ***"
         mu_frame = env.make_child_frame(procedure.formals, args)
-        return eval_all(procedure.body, mu_frame) #这个是动态作用域
+        return eval_all(procedure.body, mu_frame, True) #这个是动态作用域
         # END PROBLEM 11
     else:
         assert False, "Unexpected procedure: {}".format(procedure)
@@ -143,7 +152,8 @@ def optimize_tail_calls(unoptimized_scheme_eval):
         "*** YOUR CODE HERE ***"
         #此时不是尾调用,或者expr是自评估的或者是name,就正常评估
         while isinstance(result, Unevaluated):
-            result = unoptimized_scheme_eval(result.expr, result.env)
+            result = unoptimized_scheme_eval(result.expr, result.env, True) #这里必须传True！！！
+            
         return result
         # END OPTIONAL PROBLEM 1
     return optimized_eval
