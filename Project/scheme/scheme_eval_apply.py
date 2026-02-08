@@ -10,7 +10,7 @@ import scheme_forms
 # Eval/Apply #
 ##############
 
-def scheme_eval(expr, env, tail=False): # Optional third argument is ignored
+def scheme_eval(expr, env, tail=False): #增加第三个参数，以便在是尾上下文时能传递该参数
     """Evaluate Scheme expression EXPR in Frame ENV.
 
     >>> expr = read_line('(+ 2 2)')
@@ -44,7 +44,7 @@ def scheme_eval(expr, env, tail=False): # Optional third argument is ignored
         # BEGIN PROBLEM 3
         "*** YOUR CODE HERE ***"
         operators = scheme_eval(first, env)
-        operands = rest.map(lambda x:scheme_eval(x, env, False))
+        operands = rest.map(lambda x:scheme_eval(x, env))
         return scheme_apply(operators, operands, env)
         # END PROBLEM 3
 
@@ -78,7 +78,7 @@ def scheme_apply(procedure, args, env):
         # BEGIN PROBLEM 9
         "*** YOUR CODE HERE ***"
         lambda_frame = procedure.env.make_child_frame(procedure.formals, args) #注意!词法作用域！！！
-        return eval_all(procedure.body, lambda_frame, True)
+        return eval_all(procedure.body, lambda_frame, True) #这里必须传True，lambda函数的最后一个表达式都是尾上下文
         # END PROBLEM 9
     elif isinstance(procedure, MuProcedure):
         # BEGIN PROBLEM 11
@@ -110,7 +110,7 @@ def eval_all(expressions, env, tail = False):
     if curr is nil:
         return None
     while curr.rest is not nil:
-        last = scheme_eval(curr.first, env)
+        last = scheme_eval(curr.first, env) 
         curr = curr.rest
     last = scheme_eval(curr.first, env, tail)
     return last
@@ -152,7 +152,7 @@ def optimize_tail_calls(unoptimized_scheme_eval):
         "*** YOUR CODE HERE ***"
         #此时不是尾调用,或者expr是自评估的或者是name,就正常评估
         while isinstance(result, Unevaluated):
-            result = unoptimized_scheme_eval(result.expr, result.env, True) #这里必须传True！！！
+            result = unoptimized_scheme_eval(result.expr, result.env, True) #这里必须传True！！！为了避免在评估过程中还是原来的深度递归，而是一样的能够返回这个蹦床循环
             
         return result
         # END OPTIONAL PROBLEM 1

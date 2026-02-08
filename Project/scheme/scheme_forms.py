@@ -110,7 +110,7 @@ def do_if_form(expressions, env, tail = False):
     3
     """
     validate_form(expressions, 2, 3)
-    if is_scheme_true(scheme_eval(expressions.first, env, False)):
+    if is_scheme_true(scheme_eval(expressions.first, env)): #注意这个条件不可能是为上下文，要求出来的
         return scheme_eval(expressions.rest.first, env, tail)
     elif len(expressions) == 3:
         return scheme_eval(expressions.rest.rest.first, env, tail)
