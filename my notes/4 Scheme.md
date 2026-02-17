@@ -356,7 +356,7 @@ handling a <class 'ZeroDivisionError'>
 
 ### 一个解析器接受文本返回表达式
 
-![image-20260201201501319](.\screenshot\image-20260201201501319.png)
+![image-20260201201501319](./screenshot/image-20260201201501319.png)
 
 语法解释是一种树型递归过程
 

@@ -6,7 +6,7 @@
 
 表格由记录(records)组成，记录是表中的行，每一列都有一个值
 
-![image-20260210160740213](.\screenshot\image-20260210160740213.png)
+![image-20260210160740213](./screenshot/image-20260210160740213.png)
 
 结构化查询语言(The Structured Query Language (SQL))可能是最广泛使用的编程语言，他从现有表中生成新表，然后操作其内容。
 
@@ -33,14 +33,14 @@ create table cities as
 	select 45,             93,                "Minneapolis";
 ````
 
-![image-20260210162637310](.\screenshot\image-20260210162637310.png)
+![image-20260210162637310](./screenshot/image-20260210162637310.png)
 
 ````sql
 select "west coast" as region, name from cities where longitude >= 115 union
 select "other"               , name from cities where longitude < 115;
 ````
 
-![image-20260210162645127](.\screenshot\image-20260210162645127.png)
+![image-20260210162645127](./screenshot/image-20260210162645127.png)
 
 
 
