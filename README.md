@@ -1,3 +1,5 @@
+注：本仓库用于记录本人学习CS61A过程
+
 # CS61A Assignments Repository
 
 *English | [中文](#中文说明)*
@@ -120,4 +122,3 @@ python3 ok --local
 ### 免责声明
 - 本仓库为 **非官方** 项目，与 UC Berkeley 及 CS61A 教学团队无关。
 - 所有课程内容版权归 UC Berkeley CS61A 团队所有，仅供 **个人学习和练习** 使用，请遵守学术诚信规定。
-  
